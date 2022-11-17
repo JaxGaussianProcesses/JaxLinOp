@@ -4,11 +4,9 @@
 import codecs
 import os
 import re
-
-from typing import Optional
 from setuptools import find_packages, setup
 
-NAME = "jax_linear_operator"
+NAME = "jaxlinop"
 
 CLASSIFIERS = [
     "Intended Audience :: Science/Research",
@@ -20,12 +18,15 @@ CLASSIFIERS = [
 INSTALL_REQUIRES = [
     "jax", 
     "jaxlib", 
-    "chex", 
     "jaxtyping"
 ]
 
 EXTRA_REQUIRE = {
-    "dev": ["pytest", "pre-commit", "test"],
+    "dev": [
+        "pytest", 
+        "pre-commit",
+        "pytest-cov",
+    ],
 }
 
 GLOBAL_PATH = os.path.dirname(os.path.realpath(__file__))

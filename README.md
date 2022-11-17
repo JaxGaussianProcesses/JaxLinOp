@@ -1,34 +1,59 @@
-# Jax Linear Operator 
-`jax_linear_operator` is a lightweight linear operator library written in [`jax`](https://github.com/google/jax).
+# [JaxLinOp](https://github.com/JaxGaussianProcesses/JaxLinOp)
+
+[![PyPI version](https://badge.fury.io/py/JaxLinOP.svg)](https://badge.fury.io/py/JaxLinOP)
+
+`JaxLinOp` will be a lightweight linear operator library written in [`jax`](https://github.com/google/jax).
+
+Currently we are under development, and expect to make our first release (`v0.0.1`) soon.
 
 # Overview
-***<examples / motivation>***
+Consider solving a diagonal matrix $A$ against a vector $b$.
 
 ```python
-import jax_linear_operator
+import jax.numpy as jnp
 
-A = jax_linear_operator.DiagonalLinearOperator(diagonal = jnp.array([1., 2., 3.]))
-b = jnp.array([4., 5., 6.])
+n = 1000
+diag = jnp.linspace(1.0, 2.0, n)
+
+A = jnp.diag(diag)
+b = jnp.linspace(3.0, 4.0, n)
+
+# A⁻¹ b
+jnp.solve(A, b)
+```
+Doing so is costly in large problems. Storing the matrix gives rise to memory costs of $O(n^2)$, and inverting the matrix costs $O(n^3)$ in the number of data points $n$.
+
+But hold on a second. Notice:
+
+- We only have to store the diagonal entries to determine the matrix $A$. Doing so, would reduce memory costs from $O(n^2)$ to $O(n)$. 
+- To invert $A$, we only need to take the reciprocal of the diagonal, reducing inversion costs from $O(n^3)$, to $O(n)$. 
+
+`JaxLinOp` is designed to exploit stucture of this kind. 
+```python
+import jaxlinop
+
+A = jaxlinop.DiagonalLinearOperator(diag = diag)
 
 # A⁻¹ b
 A.solve(b)
 ```
+`JaxLinOp` will automatically reduce cost savings in matrix addition, multiplication, computing log-determinants and more, for other matrix stuctures too!
 
 # Custom Linear Operator
 
-***<example / guide>***
+The flexible design of `JaxLinOp` will allow users to impliment their own custom linear operators.
 
 ```python
-from jax_linear_operator import LinearOperator
+from jaxlinop import LinearOperator
 
-# This will possibly be a chex dataclass:
 class MyLinearOperator(LinearOperator):
   
   def __init__(self, ...)
     ...
 
-# There are a bare mininum number methods that need to be implimented, 
-# the user can add optional methods if they are more efficient than defaults given.
+# There will be a minimal number methods that users need to impliment for their custom operator. 
+# For optimal efficiency, we'll make it easy for the user to add optional methods to their operator, 
+# if they give better performance than the defaults.
 ```
 
 
@@ -36,17 +61,17 @@ class MyLinearOperator(LinearOperator):
 
 ## Stable version
 
-The latest stable version of `jax_linear_operator` can be installed via [`pip`](https://pip.pypa.io/en/stable/):
+The latest stable version of `jaxlinop` can be installed via [`pip`](https://pip.pypa.io/en/stable/):
 
 ```bash
-pip install jax_linear_operator
+pip install jaxlinop
 ```
 
 > **Note**
 >
 > We recommend you check your installation version:
 > ```python
-> python -c 'import jax_linear_operator; print(jax_linear_operator.__version__)'
+> python -c 'import jaxlinop; print(jaxlinop.__version__)'
 > ```
 
 
@@ -58,8 +83,8 @@ pip install jax_linear_operator
 
 Clone a copy of the repository to your local machine and run the setup configuration in development mode.
 ```bash
-git clone https://github.com/Daniel-Dodd/jax_linear_operator.git
-cd jax_linear_operator
+git clone https://github.com/JaxGaussianProcesses/JaxLinOp.git
+cd jaxlinop
 python -m setup develop
 ```
 
@@ -67,8 +92,8 @@ python -m setup develop
 >
 > We advise you create virtual environment before installing:
 > ```
-> conda create -n jax_lin_op_ex python=3.10.0
-> conda activate jax_lin_op_ex
+> conda create -n jaxlinop_ex python=3.10.0
+> conda activate jaxlinop_ex
 >  ```
 >
 > and recommend you check your installation passes the supplied unit tests:

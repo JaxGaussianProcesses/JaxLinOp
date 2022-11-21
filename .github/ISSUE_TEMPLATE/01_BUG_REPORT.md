@@ -1,6 +1,6 @@
 ---
 name: Bug Report
-about: Create a report to help Jax Linear Operator to improve
+about: Create a report to help JaxLinOp to improve
 title: "bug: "
 labels: "bug"
 assignees: ""
@@ -8,7 +8,7 @@ assignees: ""
 
 # Bug Report
 
-**Jax Linear Operator version:**
+**JaxLinOp version:**
 
 <!-- Please specify commit or tag version. -->
 

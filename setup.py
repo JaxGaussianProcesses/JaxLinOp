@@ -16,20 +16,22 @@ CLASSIFIERS = [
 ]
 
 INSTALL_REQUIRES = [
-    "jax", 
-    "jaxlib", 
-    "jaxtyping"
+    "jax",
+    "jaxlib",
+    "jaxtyping",
+    "distrax",
 ]
 
 EXTRA_REQUIRE = {
     "dev": [
-        "pytest", 
+        "pytest",
         "pre-commit",
         "pytest-cov",
     ],
 }
 
 GLOBAL_PATH = os.path.dirname(os.path.realpath(__file__))
+
 
 def read(*local_path: str) -> str:
     """Read a file, given a local path.
@@ -43,9 +45,11 @@ def read(*local_path: str) -> str:
     with codecs.open(os.path.join(GLOBAL_PATH, *local_path), "rb", "utf-8") as f:
         return f.read()
 
+
 # Read `__init__` file:
 init_local_path = os.path.join(NAME, "__init__.py")
 init_file = read(init_local_path)
+
 
 def find_meta(meta: str) -> str:
     """Extract `__*meta*__` from the `__init__.py` file. This is useful for extracting __version__, __author__, etc.
@@ -58,13 +62,12 @@ def find_meta(meta: str) -> str:
     """
 
     matches = re.search(
-        r"^__{meta}__ = ['\"]([^'\"]*)['\"]".format(meta=meta), 
-        init_file, 
-        re.M
+        r"^__{meta}__ = ['\"]([^'\"]*)['\"]".format(meta=meta), init_file, re.M
     )
     if matches:
         return matches.group(1)
     raise RuntimeError("Unable to find __{meta}__ string.".format(meta=meta))
+
 
 if __name__ == "__main__":
     setup(

@@ -2,9 +2,7 @@
 
 [![PyPI version](https://badge.fury.io/py/JaxLinOP.svg)](https://badge.fury.io/py/JaxLinOP)
 
-`JaxLinOp` will be a lightweight linear operator library written in [`jax`](https://github.com/google/jax).
-
-Currently we are under development, and expect to make our first release (`v0.0.1`) soon.
+`JaxLinOp` is a lightweight linear operator library written in [`jax`](https://github.com/google/jax).
 
 # Overview
 Consider solving a diagonal matrix $A$ against a vector $b$.
@@ -37,9 +35,9 @@ A = jaxlinop.DiagonalLinearOperator(diag = diag)
 # A⁻¹ b
 A.solve(b)
 ```
-`JaxLinOp` will automatically reduce cost savings in matrix addition, multiplication, computing log-determinants and more, for other matrix stuctures too!
+`JaxLinOp` is designed to automatically reduce cost savings in matrix addition, multiplication, computing log-determinants and more, for other matrix stuctures too!
 
-# Custom Linear Operator
+# Custom Linear Operator (details to come soon)
 
 The flexible design of `JaxLinOp` will allow users to impliment their own custom linear operators.
 

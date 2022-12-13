@@ -19,6 +19,7 @@ INSTALL_REQUIRES = [
     "jax",
     "jaxlib",
     "jaxtyping",
+    "jaxutils",
     "distrax",
 ]
 

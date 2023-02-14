@@ -27,7 +27,7 @@ import distrax
 from jaxtyping import Array, Float
 from typing import Any, TypeVar, Iterable, Mapping, Generic, Tuple, Union
 
-from jaxutils import PyTree
+from distrax._src.utils.jittable import Jittable as PyTree
 
 # Generic type.
 T = TypeVar("T")
@@ -204,7 +204,7 @@ class LinearOperator(PyTree, Generic[ShapeT, DTypeT], metaclass=abc.ABCMeta):
         raise NotImplementedError
 
     @classmethod
-    @abc.abstractmethod
+    # @abc.abstractmethod
     def from_dense(cls, dense: Float[Array, "N N"]) -> LinearOperator:
         """Construct linear operator from dense matrix.
 

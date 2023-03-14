@@ -37,8 +37,7 @@ INSTALL_REQUIRES = [
     "jax>=0.4.1",
     "jaxlib>=0.4.1",
     "jaxtyping",
-    "jaxutils",
-    "distrax",
+    "simple-pytree",
 ]
 
 EXTRA_REQUIRE = {

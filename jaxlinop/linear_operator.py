@@ -14,7 +14,6 @@
 # ==============================================================================
 
 from __future__ import annotations
-
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -22,12 +21,10 @@ if TYPE_CHECKING:
 
 import abc
 import jax.numpy as jnp
-import distrax
-
+from dataclasses import dataclass
 from jaxtyping import Array, Float
 from typing import Any, TypeVar, Iterable, Mapping, Generic, Tuple, Union
-
-from jaxutils import PyTree
+from simple_pytree import Pytree, static_field
 
 # Generic type.
 T = TypeVar("T")
@@ -39,30 +36,21 @@ NestedT = Union[T, Iterable["NestedT"], Mapping[Any, "NestedT"]]
 ShapeT = TypeVar("ShapeT", bound=NestedT[Tuple[int, ...]])
 DTypeT = TypeVar("DTypeT", bound=NestedT[jnp.dtype])
 
+# The Generic type is used for type checking the LinearOperator's shape and datatype.
+# `static_field` is used to mark nodes of the PyTree that don't change under JAX transformations.
+# this is important, so that we e.g., don't take the gradient with respect to the shape!
 
-class LinearOperator(PyTree, Generic[ShapeT, DTypeT], metaclass=abc.ABCMeta):
+
+@dataclass
+class LinearOperator(Pytree, Generic[ShapeT, DTypeT]):
     """Linear operator base class."""
 
-    def __init__(self, *args, **kwargs) -> None:
-        """Initialise linear operator."""
-        self._args = args
-        self._kwargs = kwargs
+    shape: ShapeT = static_field()
+    dtype: DTypeT = static_field()
 
-    @property
-    def name(self) -> str:
-        """Linear operator name."""
-        return type(self).__name__
-
-    @property
-    @abc.abstractmethod
-    def shape(self) -> ShapeT:
-        """Linear operator shape."""
-        raise NotImplementedError
-
-    @property
-    def dtype(self) -> DTypeT:
-        """Linear operator data type."""
-        return self._args[0].dtype
+    def __repr__(self) -> str:
+        """Linear operator representation."""
+        return f"{type(self).__name__}(shape={self.shape}, dtype={self.dtype.__name__})"
 
     @property
     def ndim(self) -> int:
@@ -200,7 +188,7 @@ class LinearOperator(PyTree, Generic[ShapeT, DTypeT], metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def to_dense(self) -> Float[Array, "N N"]:
-        """Construct dense Covaraince matrix from the linear operator.
+        """Construct dense matrix from the linear operator.
 
         Returns:
             Float[Array, "N N"]: Dense linear matrix.
@@ -208,7 +196,6 @@ class LinearOperator(PyTree, Generic[ShapeT, DTypeT], metaclass=abc.ABCMeta):
         raise NotImplementedError
 
     @classmethod
-    @abc.abstractmethod
     def from_dense(cls, dense: Float[Array, "N N"]) -> LinearOperator:
         """Construct linear operator from dense matrix.
 
@@ -217,15 +204,6 @@ class LinearOperator(PyTree, Generic[ShapeT, DTypeT], metaclass=abc.ABCMeta):
 
         Returns:
             LinearOperator: Linear operator.
-        """
-        raise NotImplementedError
-
-    @classmethod
-    def to_bijector(cls) -> distrax.Bijector:
-        """Construct bijector from linear operator.
-
-        Returns:
-            Bijector: Bijector.
         """
         raise NotImplementedError
 

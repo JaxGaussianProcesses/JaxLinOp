@@ -19,35 +19,38 @@ from typing import Any, Tuple, Union
 
 import jax.numpy as jnp
 from jaxtyping import Array, Float
+from dataclasses import dataclass
 
 from .linear_operator import LinearOperator
 from .diagonal_linear_operator import DiagonalLinearOperator
-from .utils import check_shapes_match, to_linear_operator
+from .utils import check_shapes_match, to_linear_operator, default_dtype
 
 
-def _check_size(size: Any) -> None:
+def _check_size(shape: Any) -> None:
 
-    if not isinstance(size, int):
-        raise ValueError(f"`length` must be an integer, but `length = {size}`.")
+    if not isinstance(shape, tuple):
+        raise ValueError(
+            f"`shape` must be a a tuple, but `type(shape) = {type(shape)}`."
+        )
+
+    if len(shape) != 2:
+        raise ValueError(f"`shape` must be a 2-tuple, but `shape = {shape}`.")
 
 
+# TODO: Generalise to non-square matrices.
+@dataclass
 class ZeroLinearOperator(LinearOperator):
+    """Zero linear operator."""
 
-    # TODO: Generalise to non-square matrices.
+    def __init__(self, shape: Tuple[int], dtype: jnp.dtype = None) -> None:
 
-    def __init__(self, size: int) -> None:
+        _check_size(shape)
 
-        _check_size(size)
-        self.size = size
+        if dtype is None:
+            dtype = default_dtype()
 
-    @property
-    def shape(self) -> Tuple[int, int]:
-        """Covaraince matrix shape.
-
-        Returns:
-            Tuple[int, int]: shape of the covariance operator.
-        """
-        return (self.size, self.size)
+        self.shape = shape
+        self.dtype = dtype
 
     def diagonal(self) -> Float[Array, "N"]:
         """
@@ -56,7 +59,7 @@ class ZeroLinearOperator(LinearOperator):
         Returns:
             Float[Array, "N"]: The diagonal of the covariance operator.
         """
-        return jnp.zeros(self.size)
+        return jnp.zeros(self.shape[0])
 
     def __add__(
         self, other: Union[Float[Array, "N N"], LinearOperator]
@@ -175,7 +178,8 @@ class ZeroLinearOperator(LinearOperator):
         """
 
         # TODO: check shapes.
-        return ZeroLinearOperator(dense.shape[0])
+        n = dense.shape[0]
+        return ZeroLinearOperator(shape=(n, n))
 
 
 __all__ = [

@@ -15,10 +15,12 @@
 
 from __future__ import annotations
 
-from typing import Tuple, Union, Any
+from typing import Any, Union
 
 import jax.numpy as jnp
 from jaxtyping import Array, Float
+from simple_pytree import static_field
+from dataclasses import dataclass
 
 from .linear_operator import LinearOperator
 from .diagonal_linear_operator import DiagonalLinearOperator
@@ -35,8 +37,14 @@ def _check_args(value: Any, size: Any) -> None:
         )
 
 
+@dataclass
 class ConstantDiagonalLinearOperator(DiagonalLinearOperator):
-    def __init__(self, value: Float[Array, "1"], size: int) -> None:
+    value: Float[Array, "1"]
+    size: int = static_field()
+
+    def __init__(
+        self, value: Float[Array, "1"], size: int, dtype: jnp.dtype = None
+    ) -> None:
         """Initialize the constant diagonal linear operator.
 
         Args:
@@ -46,8 +54,13 @@ class ConstantDiagonalLinearOperator(DiagonalLinearOperator):
 
         _check_args(value, size)
 
+        if dtype is not None:
+            value = value.astype(dtype)
+
         self.value = value
         self.size = size
+        self.shape = (size, size)
+        self.dtype = value.dtype
 
     def __add__(
         self, other: Union[Float[Array, "N N"], LinearOperator]
@@ -99,15 +112,6 @@ class ConstantDiagonalLinearOperator(DiagonalLinearOperator):
 
         else:
             return super()._add_diagonal(other)
-
-    @property
-    def shape(self) -> Tuple[int, int]:
-        """Covaraince matrix shape.
-
-        Returns:
-            Tuple[int, int]: shape of the covariance operator.
-        """
-        return (self.size, self.size)
 
     def diagonal(self) -> Float[Array, "N"]:
         """Diagonal of the covariance operator."""

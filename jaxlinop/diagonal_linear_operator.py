@@ -15,11 +15,11 @@
 
 from __future__ import annotations
 
-from typing import Tuple, Union, Any
+from typing import Any, Union
 
 import jax.numpy as jnp
 from jaxtyping import Array, Float
-
+from dataclasses import dataclass
 from .linear_operator import LinearOperator
 from .dense_linear_operator import DenseLinearOperator
 from .utils import to_linear_operator
@@ -35,17 +35,27 @@ def _check_diag(diag: Any) -> None:
         )
 
 
+@dataclass
 class DiagonalLinearOperator(LinearOperator):
     """Diagonal covariance operator."""
 
-    def __init__(self, diag: Float[Array, "N"]) -> None:
+    diag: Float[Array, "N"]
+
+    def __init__(self, diag: Float[Array, "N"], dtype: jnp.dtype = None) -> None:
         """Initialize the covariance operator.
 
         Args:
             diag (Float[Array, "N"]): Diagonal of the covariance operator.
         """
         _check_diag(diag)
+
+        if dtype is not None:
+            diag = diag.astype(dtype)
+
+        dim = diag.shape[0]
         self.diag = diag
+        self.shape = (dim, dim)
+        self.dtype = diag.dtype
 
     def diagonal(self) -> Float[Array, "N"]:
         """Diagonal of the covariance operator.
@@ -106,16 +116,6 @@ class DiagonalLinearOperator(LinearOperator):
         """
 
         return DiagonalLinearOperator(diag=self.diagonal() + other.diagonal())
-
-    @property
-    def shape(self) -> Tuple[int, int]:
-        """Covaraince matrix shape.
-
-        Returns:
-            Tuple[int, int]: shape of the covariance operator.
-        """
-        N = self.diag.shape[0]
-        return (N, N)
 
     def to_dense(self) -> Float[Array, "N N"]:
         """Construct dense Covaraince matrix from the covariance operator.
@@ -184,7 +184,7 @@ class DiagonalLinearOperator(LinearOperator):
         Returns:
             DiagonalLinearOperator: Covariance operator.
         """
-        return _DiagonalFromRoot(root=root)
+        return DiagonalFromRootLinearOperator(root=root)
 
     @classmethod
     def from_dense(cls, dense: Float[Array, "N N"]) -> DiagonalLinearOperator:
@@ -196,7 +196,9 @@ class DiagonalLinearOperator(LinearOperator):
         return DiagonalLinearOperator(diag=dense.diagonal())
 
 
-class _DiagonalFromRoot(DiagonalLinearOperator):
+class DiagonalFromRootLinearOperator(DiagonalLinearOperator):
+    root: DiagonalLinearOperator
+
     def __init__(self, root: DiagonalLinearOperator):
         """Initialize the covariance operator."""
 
@@ -204,13 +206,11 @@ class _DiagonalFromRoot(DiagonalLinearOperator):
             raise ValueError("root must be a DiagonalLinearOperator")
 
         self.root = root
+        self.shape = root.shape
+        self.dtype = root.dtype
 
     def to_root(self) -> LinearOperator:
         return self.root
-
-    @property
-    def shape(self) -> Tuple[int, int]:
-        return self.root.shape
 
     @property
     def diag(self) -> Float[Array, "N"]:

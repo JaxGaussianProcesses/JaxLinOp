@@ -65,7 +65,7 @@ def read(*local_path: str) -> str:
 
 
 # Read `__init__` file:
-init_local_path = os.path.join(NAME, "__init__.py")
+init_local_path = os.path.join('jaxlinop', "__init__.py")
 init_file = read(init_local_path)
 
 

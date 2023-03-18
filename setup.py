@@ -10,8 +10,8 @@ from setuptools import find_packages, setup
 NAME = "jaxlinop"
 
 # Handle builds of nightly release - adapted from BlackJax.
-if "BUILD_PACKAGENAME_NIGHTLY" in os.environ:
-    if os.environ["BUILD_PACKAGENAME_NIGHTLY"] == "nightly":
+if "BUILD_JAXLINOP_NIGHTLY" in os.environ:
+    if os.environ["BUILD_JAXLINOP_NIGHTLY"] == "nightly":
         NAME += "-nightly"
 
         from versioneer import get_versions as original_get_versions

@@ -1,5 +1,5 @@
 <p align="center">
-<img width="700" height="400" src="https://raw.githubusercontent.com/JaxGaussianProcesses/JaxLinOp/main/docs/_static/logo/logo.png" alt="JaxLinOp's logo">
+<img width="700" height="425" src="https://raw.githubusercontent.com/JaxGaussianProcesses/JaxLinOp/main/docs/_static/logo/logo.png" alt="JaxLinOp's logo">
 </p>
 <h2 align='center'>Linear Operators in JAX.</h2>
 

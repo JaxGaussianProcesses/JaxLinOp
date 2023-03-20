@@ -1,4 +1,7 @@
-# [JaxLinOp](https://github.com/JaxGaussianProcesses/JaxLinOp)
+<p align="center">
+<img width="700" height="300" src="https://raw.githubusercontent.com/JaxGaussianProcesses/JaxLinOp/main/docs/_static/logo/logo.png" alt="JaxLinOp's logo">
+</p>
+<h2 align='center'>Linear Operators in JAX.</h2>
 
 [![PyPI version](https://badge.fury.io/py/JaxLinOP.svg)](https://badge.fury.io/py/JaxLinOP)
 

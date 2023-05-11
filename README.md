@@ -1,3 +1,7 @@
+----
+This project has now been incorporated into [GPJax](https://github.com/JaxGaussianProcesses/GPJax).
+----
+
 <p align="center">
 <img width="700" height="425" src="https://raw.githubusercontent.com/JaxGaussianProcesses/JaxLinOp/main/docs/_static/logo/logo.png" alt="JaxLinOp's logo">
 </p>
